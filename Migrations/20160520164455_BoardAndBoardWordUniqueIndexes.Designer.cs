@@ -8,9 +8,10 @@ using BoggleBoardMaker;
 namespace BoggleBoardMaker.Migrations
 {
     [DbContext(typeof(BoggleBoardContext))]
-    partial class BoggleBoardContextModelSnapshot : ModelSnapshot
+    [Migration("20160520164455_BoardAndBoardWordUniqueIndexes")]
+    partial class BoardAndBoardWordUniqueIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rc2-20896");
