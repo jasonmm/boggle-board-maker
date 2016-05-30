@@ -45,8 +45,6 @@ namespace BoggleBoardMaker
 
         public void Solve(string[] wordList)
         {
-            Console.WriteLine("wordlist count: " + wordList.Length);
-
             foreach (var word in wordList)
             {
                 if (word.Length < 3)
@@ -58,8 +56,6 @@ namespace BoggleBoardMaker
                     WordsInBoard.Add(word);
                 }
             }
-
-            Console.WriteLine("in solve: " + WordsInBoard.Count);
         }
 
         private bool IsWordInBoard(string word)

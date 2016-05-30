@@ -32,16 +32,35 @@ namespace BoggleBoardMaker
                 var boggle = new BoggleBoard();
                 boggle.Create(dimension);
 
-                Console.WriteLine(boggle.GetBoard(formatted: true) + "\n");
-                Console.WriteLine(boggle.GetBoard() + "\n");
-
-                db.Boards.Add(new Board { BoardId = Guid.NewGuid().ToString(), BoardStr = boggle.GetBoard() });
+                var dbBoard = new Board
+                {
+                    BoardId = Guid.NewGuid().ToString(),
+                    BoardStr = boggle.GetBoard()
+                };
+                db.Boards.Add(dbBoard);
 
                 boggle.Solve(wordList);
                 var wordsInBoard = boggle.WordsInBoard;
 
-                Console.WriteLine(wordsInBoard.Count);
-                Console.WriteLine(string.Join(",", wordsInBoard.ToArray()));
+                foreach (var word in wordsInBoard)
+                {
+                    var dbWord = new BoardWord
+                    {
+                        BoardWordId = Guid.NewGuid().ToString(),
+                        BoardId = dbBoard.BoardId,
+                        Word = word
+                    };
+                    db.BoardWords.Add(dbWord);
+                }
+
+                if (wordsInBoard.Count > 200)
+                {
+                    Console.WriteLine(boggle.GetBoard(formatted: true) + "\n");
+                    Console.WriteLine(boggle.GetBoard() + "\n");
+
+                    Console.WriteLine(wordsInBoard.Count);
+                    Console.WriteLine(string.Join(",", wordsInBoard.ToArray()));
+                }
 
                 db.SaveChanges();
             }
