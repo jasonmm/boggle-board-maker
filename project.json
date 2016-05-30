@@ -17,6 +17,9 @@
   },
   "frameworks": {
     "netcoreapp1.0": {
+      "buildOptions": {
+        "emitEntryPoint": true
+      },
       "imports": [
         "dnxcore50",
         "portable-net452+win81"
