@@ -4,8 +4,14 @@ using System.Collections.Generic;
 
 namespace BoggleBoardMaker
 {
+    /// <summary>
+    /// Contains logic creating, solving, and displaying boggle boards.
+    /// </summary>
     public class BoggleBoard
     {
+        /// <summary>
+        /// The directions of the compass.  Used when solving the boggle board.
+        /// </summary>
         public static readonly int[,] Directions = {
             {1, 0},
             {1, 1},
@@ -16,12 +22,31 @@ namespace BoggleBoardMaker
             {0, -1},
             {1, -1},
         };
+
+        /// <summary>
+        /// Standard alphabet.
+        /// </summary>
         private static string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        
+        /// <summary>
+        /// An alphabet based on the frequency of the letters.
+        /// Used the table found [here](https://en.wikipedia.org/wiki/Letter_frequency#Relative_frequencies_of_letters_in_the_English_language)
+        /// and rounded the percentages.  All 0.xxx% values were rounded up.
+        /// </summary>
+        private static string LetterFrequencyAlphabet = "AAAAAAAABCCCDDDDEEEEEEEEEEEEEFFGHHHHHHIIIIIIIJKLLLLMMMNNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTTTTUUUVWWXYYZ";
+
+        /// <summary>
+        /// The boggle board stored as a string.
+        /// </summary>
         private string Board = "";
+        
         private int BoardDimension = 0;
         private List<int> BoardIndexesUsed = new List<int>();
         public List<string> WordsInBoard = new List<string>();
 
+        /// <summary>
+        /// Creates a boggle board and returns the string.
+        /// </summary>
         public string Create(int dimension)
         {
             var r = new System.Random();
@@ -38,19 +63,30 @@ namespace BoggleBoardMaker
             return Board;
         }
 
+        /// <summary>
+        /// Get the board.  If "formatted" is true then a string
+        /// with newlines will be returned allowing the string to
+        /// be output and display as a grid.
+        /// </summary>
         public string GetBoard(bool formatted = false)
         {
             return formatted ? Draw() : Board;
         }
 
+        /// <summary>
+        /// Solve the boggle board using the given "wordList" as the list of
+        /// all valid words.
+        /// </summary>
         public void Solve(string[] wordList)
         {
             foreach (var word in wordList)
             {
+                // Words less than 3 chars is not boggle.
                 if (word.Length < 3)
                 {
                     continue;
                 }
+                
                 if (IsWordInBoard(word.ToUpper()))
                 {
                     WordsInBoard.Add(word);
@@ -58,6 +94,9 @@ namespace BoggleBoardMaker
             }
         }
 
+        /// <summary>
+        /// Determines if the given word is in the boggle board.
+        /// </summary>
         private bool IsWordInBoard(string word)
         {
             BoardIndexesUsed.Clear();
@@ -76,6 +115,10 @@ namespace BoggleBoardMaker
             return false;
         }
 
+        /// <summary>
+        /// Determines if the letter in "word" at "wordIndex" matches any of
+        /// the letters surrounding the letter at the given "boardIndex".
+        /// </summary>
         private bool IsLetterInWord(int boardIndex, string word, int wordIndex)
         {
             for (var directionIndex = 0; directionIndex < 8; directionIndex++)
@@ -130,6 +173,9 @@ namespace BoggleBoardMaker
             return false;
         }
 
+        /// <summary>
+        /// Turn the board into a two dimensional char array.
+        /// </summary>
         public char[,] GetBoardArray()
         {
             var dimension = Convert.ToInt16(Math.Sqrt(Board.Length));
@@ -151,6 +197,9 @@ namespace BoggleBoardMaker
             return boardArray;
         }
 
+        /// <summary>
+        /// Returns a string with newlines allowing the string to display as a grid.
+        /// </summary>
         private string Draw()
         {
             var dimension = Convert.ToInt16(Math.Sqrt(Board.Length));
