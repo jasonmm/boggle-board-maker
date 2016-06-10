@@ -14,7 +14,7 @@ namespace BoggleBoardMaker
             }
 
             var boardDimension = Convert.ToInt16(args[0]);
-            var numberOfBoardsToCreated = Convert.ToInt16(args[1]);
+            var numberOfBoardsToCreated = Convert.ToInt32(args[1]);
             var wordListFileName = args[2];
 
             var p = new Program();
