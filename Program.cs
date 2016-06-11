@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BoggleBoardMaker
 {
@@ -14,56 +16,57 @@ namespace BoggleBoardMaker
             }
 
             var boardDimension = Convert.ToInt16(args[0]);
-            var numberOfBoardsToCreated = Convert.ToInt32(args[1]);
+            var numberOfBoardsToBeCreated = Convert.ToInt32(args[1]);
             var wordListFileName = args[2];
+            List<Task<BoggleBoard>> tasks = new List<Task<BoggleBoard>>();
+            var random = new Random();
 
-            var p = new Program();
-            p.BuildBoards(boardDimension, numberOfBoardsToCreated, wordListFileName);
-        }
-
-        public void BuildBoards(int dimension, int numberOfBoards, string wordListFileName)
-        {
+            // Read the acceptable words from the file.
             var wordList = File.ReadAllLines(wordListFileName, Encoding.ASCII);
 
-            var db = new BoggleBoardContext();
-
-            for (var i = 0; i < numberOfBoards; i++)
+            // Create the list of tasks that will create and solve the boards.
+            for (var i = 0; i < numberOfBoardsToBeCreated; i++)
             {
-                var boggle = new BoggleBoard();
-                boggle.Create(dimension);
+                tasks.Add(BoggleBoard.CreateAndSolveAsync(boardDimension, wordList, random));
+            }
 
-                var dbBoard = new Board
+            // Wait for the tasks to finish.
+            Task.WaitAll(tasks.ToArray());
+
+            // Add each created board to the database.
+            using (var db = new BoggleBoardContext())
+            {
+                foreach (var task in tasks)
                 {
-                    BoardId = Guid.NewGuid().ToString(),
-                    BoardStr = boggle.GetBoard()
-                };
-                db.Boards.Add(dbBoard);
-
-                boggle.Solve(wordList);
-                var wordsInBoard = boggle.WordsInBoard;
-
-                foreach (var word in wordsInBoard)
-                {
-                    var dbWord = new BoardWord
-                    {
-                        BoardWordId = Guid.NewGuid().ToString(),
-                        BoardId = dbBoard.BoardId,
-                        Word = word
-                    };
-                    db.BoardWords.Add(dbWord);
+                    SaveBoardToDatabase(task.Result, db);
                 }
-
-                if (wordsInBoard.Count > 200)
-                {
-                    Console.WriteLine(boggle.GetBoard(formatted: true) + "\n");
-                    Console.WriteLine(boggle.GetBoard() + "\n");
-
-                    Console.WriteLine(wordsInBoard.Count);
-                    Console.WriteLine(string.Join(",", wordsInBoard.ToArray()));
-                }
-
                 db.SaveChanges();
             }
+        }
+
+        /// <summary>
+        /// Save the given board to the given database context.
+        /// </summary>
+        public static void SaveBoardToDatabase(BoggleBoard board, BoggleBoardContext db)
+        {
+            var dbBoard = new Board
+            {
+                BoardId = Guid.NewGuid().ToString(),
+                BoardStr = board.GetBoard()
+            };
+            db.Boards.Add(dbBoard);
+
+            foreach (var word in board.WordsInBoard)
+            {
+                var dbWord = new BoardWord
+                {
+                    BoardWordId = Guid.NewGuid().ToString(),
+                    BoardId = dbBoard.BoardId,
+                    Word = word
+                };
+                db.BoardWords.Add(dbWord);
+            }
+
         }
     }
 }

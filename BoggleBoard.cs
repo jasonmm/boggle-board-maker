@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BoggleBoardMaker
 {
@@ -27,7 +28,7 @@ namespace BoggleBoardMaker
         /// Standard alphabet.
         /// </summary>
         private static string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        
+
         /// <summary>
         /// An alphabet based on the frequency of the letters.
         /// Used the table found [here](https://en.wikipedia.org/wiki/Letter_frequency#Relative_frequencies_of_letters_in_the_English_language)
@@ -58,7 +59,7 @@ namespace BoggleBoardMaker
             "ELPSTU",
             "GILRUW"
         };
-        
+
         /// <summary>
         /// Letter cubes from the "new" boggle game.  Each cube is a 
         /// string, with each letter a side of the cube.
@@ -80,24 +81,37 @@ namespace BoggleBoardMaker
             "EIOSST",
             "ELRTTY",
             "HIMNUQ",
-            "HLNNRZ"  
+            "HLNNRZ"
         };
-        
+
         /// <summary>
         /// The boggle board stored as a string.
         /// </summary>
         private string Board = "";
-        
+
         private int BoardDimension = 0;
         private List<int> BoardIndexesUsed = new List<int>();
         public List<string> WordsInBoard = new List<string>();
 
         /// <summary>
+        /// Asynchronously create and solve a boggle board.
+        /// </summary>
+        public static Task<BoggleBoard> CreateAndSolveAsync(int dimension, string[] wordList, Random random)
+        {
+            return Task.Run(() =>
+            {
+                var board = new BoggleBoard();
+                board.Create(dimension, random);
+                board.Solve(wordList);
+                return board;
+            });
+        }
+
+        /// <summary>
         /// Creates a boggle board and returns the string.
         /// </summary>
-        public string Create(int dimension)
+        public string Create(int dimension, Random r)
         {
-            var r = new System.Random();
             var n = dimension * dimension;
             var alphabetLen = Alphabet.Length;
             BoardDimension = dimension;
@@ -134,7 +148,7 @@ namespace BoggleBoardMaker
                 {
                     continue;
                 }
-                
+
                 if (IsWordInBoard(word.ToUpper()))
                 {
                     WordsInBoard.Add(word);
