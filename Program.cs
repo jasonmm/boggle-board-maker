@@ -39,7 +39,7 @@ namespace BoggleBoardMaker
                     Rand = random,
 
                     QualityChecker = qualityChecker,
-                    Creator = new BoardCreators.PureAlphabet(),
+                    Creator = new BoardCreators.FrequencyAlphabet(),
                     Solver = solver
                 });
                 tasks.Add(t);

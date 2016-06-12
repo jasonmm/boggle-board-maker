@@ -12,13 +12,6 @@ namespace BoggleBoardMaker
     {
 
         /// <summary>
-        /// An alphabet based on the frequency of the letters.
-        /// Used the table found [here](https://en.wikipedia.org/wiki/Letter_frequency#Relative_frequencies_of_letters_in_the_English_language)
-        /// and rounded the percentages.  All 0.xxx% values were rounded up.
-        /// </summary>
-        private static string LetterFrequencyAlphabet = "AAAAAAAABCCCDDDDEEEEEEEEEEEEEFFGHHHHHHIIIIIIIJKLLLLMMMNNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTTTTUUUVWWXYYZ";
-
-        /// <summary>
         /// Letter cubes from the original boggle game.  Each cube is a 
         /// string, with each letter a side of the cube.
         /// [source](http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html)
