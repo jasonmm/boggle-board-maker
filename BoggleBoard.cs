@@ -10,24 +10,6 @@ namespace BoggleBoardMaker
     /// </summary>
     public class BoggleBoard
     {
-        /// <summary>
-        /// The directions of the compass.  Used when solving the boggle board.
-        /// </summary>
-        public static readonly int[,] Directions = {
-            {1, 0},
-            {1, 1},
-            {0, 1},
-            {-1, 1},
-            {-1, 0},
-            {-1, -1},
-            {0, -1},
-            {1, -1},
-        };
-
-        /// <summary>
-        /// Standard alphabet.
-        /// </summary>
-        private static string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         /// <summary>
         /// An alphabet based on the frequency of the letters.
@@ -87,10 +69,9 @@ namespace BoggleBoardMaker
         /// <summary>
         /// The boggle board stored as a string.
         /// </summary>
-        private string Board = "";
+        public string Board = "";
 
-        private int BoardDimension = 0;
-        private List<int> BoardIndexesUsed = new List<int>();
+        public int BoardDimension = 0;
         public List<string> WordsInBoard = new List<string>();
 
         /// <summary>
@@ -103,29 +84,10 @@ namespace BoggleBoardMaker
         {
             return Task.Run(() =>
             {
-                var board = new BoggleBoard();
-                board.Create(options.Dimension, options.Rand);
-                board.Solve(options.WordList);
+                var board = options.Creator.Create(options);
+                board.WordsInBoard = options.Solver.Solve(board);
                 return options.QualityChecker.CheckQuality(board) ? board : null;
             });
-        }
-
-        /// <summary>
-        /// Creates a boggle board and returns the string.
-        /// </summary>
-        public string Create(int dimension, Random r)
-        {
-            var n = dimension * dimension;
-            var alphabetLen = Alphabet.Length;
-            BoardDimension = dimension;
-
-            for (var i = 0; i < n; i++)
-            {
-                var index = r.Next(0, alphabetLen);
-                Board += Alphabet[index];
-            }
-
-            return Board;
         }
 
         /// <summary>
@@ -138,105 +100,6 @@ namespace BoggleBoardMaker
             return formatted ? Draw() : Board;
         }
 
-        /// <summary>
-        /// Solve the boggle board using the given "wordList" as the list of
-        /// all valid words.
-        /// </summary>
-        public void Solve(string[] wordList)
-        {
-            foreach (var word in wordList)
-            {
-                // Words less than 3 chars is not boggle.
-                if (word.Length < 3)
-                {
-                    continue;
-                }
-
-                if (IsWordInBoard(word.ToUpper()))
-                {
-                    WordsInBoard.Add(word);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Determines if the given word is in the boggle board.
-        /// </summary>
-        private bool IsWordInBoard(string word)
-        {
-            BoardIndexesUsed.Clear();
-
-            for (var i = 0; i < Board.Length; i++)
-            {
-                if (word[0] == Board[i])
-                {
-                    BoardIndexesUsed.Add(i);
-                    if (IsLetterInWord(i, word, 1))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Determines if the letter in "word" at "wordIndex" matches any of
-        /// the letters surrounding the letter at the given "boardIndex".
-        /// </summary>
-        private bool IsLetterInWord(int boardIndex, string word, int wordIndex)
-        {
-            for (var directionIndex = 0; directionIndex < 8; directionIndex++)
-            {
-                // Get the X,Y coordinates from the board string's index.
-                int boardY = boardIndex / BoardDimension;
-                int boardX = boardIndex % BoardDimension;
-
-                // Move the X,Y coordinates in the current direction.
-                boardX += Directions[directionIndex, 0];
-                boardY += Directions[directionIndex, 1];
-
-                // Check to see if the new coordinates are outside the board.
-                if (boardX < 0 || boardX > BoardDimension - 1 || boardY < 0 || boardY > BoardDimension - 1)
-                {
-                    continue;
-                }
-
-                // Convert the X,Y coordinates back into an index into our board string.
-                int newBoardIndex = boardY * BoardDimension + boardX;
-
-                // Check to see if the new board index is outside the board.
-                if (newBoardIndex < 0 || newBoardIndex > Board.Length - 1)
-                {
-                    continue;
-                }
-
-                // Check to see if the new board index has already been used in this word.
-                if (BoardIndexesUsed.Contains(newBoardIndex))
-                {
-                    continue;
-                }
-
-                // If the letter at the new board index matches the letter at 
-                // wordIndex then we move there and do the process over again.
-                if (Board[newBoardIndex] == word[wordIndex])
-                {
-                    BoardIndexesUsed.Add(newBoardIndex);
-                    if (wordIndex + 1 < word.Length)
-                    {
-                        if (IsLetterInWord(newBoardIndex, word, wordIndex + 1))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
 
         /// <summary>
         /// Turn the board into a two dimensional char array.

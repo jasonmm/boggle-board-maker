@@ -11,5 +11,7 @@ namespace BoggleBoardMaker
         public string[] WordList;
         public Random Rand;
         public IBoardQualityInterface QualityChecker;
+        public IBoardCreatorInterface Creator;
+        public IBoardSolverInterface Solver;
     }
 }

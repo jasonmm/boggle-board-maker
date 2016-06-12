@@ -28,14 +28,20 @@ namespace BoggleBoardMaker
             for (var i = 0; i < numberOfBoardsToBeCreated; i++)
             {
                 var qualityChecker = new BoardQuality.NumberOfWords(200);
-                var options = new BoardCreationOptions
+
+                var solver = new BoardSolvers.BasicSolver();
+                solver.SetWordList(wordList);
+
+                var t = BoggleBoard.CreateAndSolveAsync(new BoardCreationOptions
                 {
                     Dimension = boardDimension,
                     WordList = wordList,
                     Rand = random,
-                    QualityChecker = qualityChecker
-                };
-                var t = BoggleBoard.CreateAndSolveAsync(options);
+
+                    QualityChecker = qualityChecker,
+                    Creator = new BoardCreators.PureAlphabet(),
+                    Solver = solver
+                });
                 tasks.Add(t);
             }
 
