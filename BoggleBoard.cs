@@ -94,16 +94,19 @@ namespace BoggleBoardMaker
         public List<string> WordsInBoard = new List<string>();
 
         /// <summary>
-        /// Asynchronously create and solve a boggle board.
+        /// Asynchronously create and solve a boggle board. The result of the 
+        /// task will be null if the created and solved board does not pass the
+        /// the quality check.  Otherwise the result will be an object of type
+        /// BoggleBoard.
         /// </summary>
-        public static Task<BoggleBoard> CreateAndSolveAsync(int dimension, string[] wordList, Random random)
+        public static Task<BoggleBoard> CreateAndSolveAsync(BoardCreationOptions options)
         {
             return Task.Run(() =>
             {
                 var board = new BoggleBoard();
-                board.Create(dimension, random);
-                board.Solve(wordList);
-                return board;
+                board.Create(options.Dimension, options.Rand);
+                board.Solve(options.WordList);
+                return options.QualityChecker.CheckQuality(board) ? board : null;
             });
         }
 

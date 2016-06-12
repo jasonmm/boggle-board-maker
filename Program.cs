@@ -27,7 +27,16 @@ namespace BoggleBoardMaker
             // Create the list of tasks that will create and solve the boards.
             for (var i = 0; i < numberOfBoardsToBeCreated; i++)
             {
-                tasks.Add(BoggleBoard.CreateAndSolveAsync(boardDimension, wordList, random));
+                var qualityChecker = new BoardQuality.NumberOfWords(200);
+                var options = new BoardCreationOptions
+                {
+                    Dimension = boardDimension,
+                    WordList = wordList,
+                    Rand = random,
+                    QualityChecker = qualityChecker
+                };
+                var t = BoggleBoard.CreateAndSolveAsync(options);
+                tasks.Add(t);
             }
 
             // Wait for the tasks to finish.
@@ -38,7 +47,10 @@ namespace BoggleBoardMaker
             {
                 foreach (var task in tasks)
                 {
-                    SaveBoardToDatabase(task.Result, db);
+                    if (task.Result != null)
+                    {
+                        SaveBoardToDatabase(task.Result, db);
+                    }
                 }
                 db.SaveChanges();
             }
