@@ -10,55 +10,6 @@ namespace BoggleBoardMaker
     /// </summary>
     public class BoggleBoard
     {
-
-        /// <summary>
-        /// Letter cubes from the original boggle game.  Each cube is a 
-        /// string, with each letter a side of the cube.
-        /// [source](http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html)
-        /// </summary>
-        private static string[] LetterCubesClassic = {
-            "AACIOT",
-            "ABILTY",
-            "ABJMOQ",
-            "ACDEMP",
-            "ACELRS",
-            "ADENVZ",
-            "AHMORS",
-            "BIFORX",
-            "DENOSW",
-            "DKNOTU",
-            "EEFHIY",
-            "EGKLUY",
-            "EGINTV",
-            "EHINPS",
-            "ELPSTU",
-            "GILRUW"
-        };
-
-        /// <summary>
-        /// Letter cubes from the "new" boggle game.  Each cube is a 
-        /// string, with each letter a side of the cube.
-        /// [source](http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html)
-        /// </summary>
-        private static string[] LetterCubesNew = {
-            "AAEEGN",
-            "ABBJOO",
-            "ACHOPS",
-            "AFFKPS",
-            "AOOTTW",
-            "CIMOTU",
-            "DEILRX",
-            "DELRVY",
-            "DISTTY",
-            "EEGHNW",
-            "EEINSU",
-            "EHRTVW",
-            "EIOSST",
-            "ELRTTY",
-            "HIMNUQ",
-            "HLNNRZ"
-        };
-
         /// <summary>
         /// The boggle board stored as a string.
         /// </summary>
